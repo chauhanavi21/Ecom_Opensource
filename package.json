@@ -1,0 +1,35 @@
+{
+  "name": "ecommerce-template",
+  "private": true,
+  "workspaces": [
+    "user/backend",
+    "user/frontend",
+    "admin/backend",
+    "admin/frontend"
+  ],
+  "scripts": {
+    "postinstall": "prisma generate && node scripts/prune-nested-rxjs.cjs",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "dev:user": "concurrently -k -n api,web \"npm run dev -w user-backend\" \"npm run dev -w user-frontend\"",
+    "dev:admin": "concurrently -k -n api,web \"npm run dev -w admin-backend\" \"npm run dev -w admin-frontend\"",
+    "dev:all": "concurrently -k -n user-api,user-web,admin-api,admin-web \"npm run dev -w user-backend\" \"npm run dev -w user-frontend\" \"npm run dev -w admin-backend\" \"npm run dev -w admin-frontend\""
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.2",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^9.1.0",
+    "prisma": "^6.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.1.0",
+    "rxjs": "7.8.1"
+  },
+  "overrides": {
+    "rxjs": "7.8.1"
+  }
+}
