@@ -1,0 +1,132 @@
+<div class="stack">
+  <h2 style="margin-top: 0">Offers &amp; deals</h2>
+  <p class="muted">
+    Store-wide promos leave product empty; product-scoped deals attach to one SKU. The storefront
+    shows active rows within the date window.
+  </p>
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  <section class="panel">
+    <h3 style="margin-top: 0">{{ editingId() ? "Edit promotion" : "Add promotion" }}</h3>
+    <form class="stack" (ngSubmit)="save()">
+      <div class="row">
+        <label>
+          Title
+          <input name="title" [(ngModel)]="form.title" required />
+        </label>
+        <label>
+          Sort order
+          <input type="number" name="sortOrder" [(ngModel)]="form.sortOrder" />
+        </label>
+        <label>
+          Discount type
+          <select name="discountType" [(ngModel)]="form.discountType">
+            <option value="PERCENT">Percent</option>
+            <option value="FIXED">Fixed (cents)</option>
+          </select>
+        </label>
+      </div>
+      <label>
+        Description
+        <textarea name="description" [(ngModel)]="form.description"></textarea>
+      </label>
+      <div class="row">
+        @if (form.discountType === "PERCENT") {
+          <label>
+            Percent off
+            <input
+              type="number"
+              name="discountPercent"
+              min="0"
+              step="0.1"
+              [(ngModel)]="form.discountPercent"
+            />
+          </label>
+        } @else {
+          <label>
+            Fixed off (cents)
+            <input
+              type="number"
+              name="fixedDiscountCents"
+              min="0"
+              [(ngModel)]="form.fixedDiscountCents"
+            />
+          </label>
+        }
+        <label>
+          Product (optional)
+          <select name="productId" [(ngModel)]="form.productId">
+            <option value="">Store-wide</option>
+            @for (p of products(); track p.id) {
+              <option [value]="p.id">{{ p.name }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Banner image URL
+          <input name="bannerImageUrl" [(ngModel)]="form.bannerImageUrl" />
+        </label>
+      </div>
+      <div class="row">
+        <label>
+          Starts
+          <input type="datetime-local" name="startsAt" [(ngModel)]="form.startsAt" />
+        </label>
+        <label>
+          Ends
+          <input type="datetime-local" name="endsAt" [(ngModel)]="form.endsAt" />
+        </label>
+        <label style="flex-direction: row; align-items: center; gap: 0.5rem">
+          <input type="checkbox" [(ngModel)]="form.isActive" name="promoActive" />
+          Active
+        </label>
+      </div>
+      <div class="row">
+        <button type="submit">{{ editingId() ? "Save" : "Create" }}</button>
+        @if (editingId()) {
+          <button type="button" class="secondary" (click)="resetForm()">Cancel edit</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else {
+    <div class="panel" style="overflow-x: auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Scope</th>
+            <th>Active</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of items(); track p.id) {
+            <tr>
+              <td>{{ p.title }}</td>
+              <td>
+                @if (p.discountType === "PERCENT") {
+                  {{ p.discountPercent ?? 0 }}%
+                } @else {
+                  {{ p.fixedDiscountCents ?? 0 }}¢
+                }
+              </td>
+              <td>{{ p.product ? p.product.name : "Store-wide" }}</td>
+              <td>{{ p.isActive ? "yes" : "no" }}</td>
+              <td style="white-space: nowrap">
+                <button type="button" class="secondary" (click)="startEdit(p)">Edit</button>
+                <button type="button" class="danger" (click)="delete(p)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
