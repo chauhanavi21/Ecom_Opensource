@@ -1,0 +1,26 @@
+<div class="login panel stack">
+  <h2>Sign in</h2>
+  <p class="muted">
+    Demo (from seed): <code>admin&#64;demo.local</code> / <code>admin123</code>
+  </p>
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+  <form class="stack" (ngSubmit)="submit()">
+    <label>
+      Email
+      <input type="email" name="email" [(ngModel)]="email" autocomplete="username" required />
+    </label>
+    <label>
+      Password
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        autocomplete="current-password"
+        required
+      />
+    </label>
+    <button type="submit" [disabled]="loading()">{{ loading() ? "Signing in…" : "Sign in" }}</button>
+  </form>
+</div>
