@@ -1,0 +1,14 @@
+<div class="shell">
+  <header class="top">
+    <h1>Store admin</h1>
+    <nav>
+      <a routerLink="/products">Products</a>
+      <a routerLink="/promotions">Offers &amp; deals</a>
+      <span class="pill">{{ auth.email() }}</span>
+      <button type="button" class="secondary" (click)="auth.logout()">Log out</button>
+    </nav>
+  </header>
+  <main>
+    <router-outlet />
+  </main>
+</div>
