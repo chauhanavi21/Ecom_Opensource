@@ -1,0 +1,76 @@
+<section class="hero">
+  <h1>Goods for everyday work and rest.</h1>
+  <p>
+    Reusable e‑commerce shell: catalog and offers are driven from the admin app and stored in one
+    database.
+  </p>
+</section>
+
+@if (promotions().length > 0) {
+  <div class="banner-stack">
+    @for (p of promotions(); track p.id) {
+      <article class="promo-card">
+        <div>
+          <h2>{{ p.title }}</h2>
+          @if (p.description) {
+            <p>{{ p.description }}</p>
+          }
+        </div>
+        @if (p.bannerImageUrl) {
+          <img class="promo-thumb" [src]="p.bannerImageUrl" alt="" />
+        }
+      </article>
+    }
+  </div>
+}
+
+<div class="filters">
+  <button type="button" class="chip" [class.active]="!category()" (click)="setCategory(undefined)">
+    All
+  </button>
+  @for (c of categories(); track c) {
+    <button
+      type="button"
+      class="chip"
+      [class.active]="category() === c"
+      (click)="setCategory(c)"
+    >
+      {{ c }}
+    </button>
+  }
+</div>
+
+@if (error()) {
+  <div class="error">{{ error() }}</div>
+}
+@if (loading()) {
+  <p class="loading">Loading catalog…</p>
+}
+
+@if (!loading() && !error()) {
+  <div class="grid">
+    @for (p of products(); track p.id) {
+      <a [routerLink]="['/product', p.slug]" class="card">
+        <img
+          class="card-img"
+          [src]="p.imageUrl || 'https://placehold.co/600x450/eaeaea/999?text=Product'"
+          alt=""
+        />
+        <div class="card-body">
+          <div class="card-meta">{{ p.category }}</div>
+          <div class="card-title">{{ p.name }}</div>
+          <div class="price-row">
+            <span class="price">{{ formatMoney(p.priceCents) }}</span>
+            @if (p.compareAtPriceCents != null && p.compareAtPriceCents > p.priceCents) {
+              <span class="was">{{ formatMoney(p.compareAtPriceCents) }}</span>
+            }
+          </div>
+          @let label = bestDealLabel(p);
+          @if (label) {
+            <span class="badge">{{ label }}</span>
+          }
+        </div>
+      </a>
+    }
+  </div>
+}
