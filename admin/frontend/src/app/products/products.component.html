@@ -1,0 +1,97 @@
+<div class="stack">
+  <h2 style="margin-top: 0">Products</h2>
+  <p class="muted">
+    Edits apply to the shared database — the Angular storefront reads active products and linked
+    promotions.
+  </p>
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  <section class="panel">
+    <h3 style="margin-top: 0">{{ editingId() ? "Edit product" : "Add product" }}</h3>
+    <form class="stack" (ngSubmit)="save()">
+      <div class="row">
+        <label>
+          Name
+          <input name="name" [(ngModel)]="form.name" required />
+        </label>
+        <label>
+          Slug
+          <input name="slug" [(ngModel)]="form.slug" required />
+        </label>
+        <label>
+          Category
+          <input name="category" [(ngModel)]="form.category" />
+        </label>
+      </div>
+      <label>
+        Description
+        <textarea name="description" [(ngModel)]="form.description"></textarea>
+      </label>
+      <div class="row">
+        <label>
+          Price (cents)
+          <input type="number" name="priceCents" min="0" [(ngModel)]="form.priceCents" required />
+        </label>
+        <label>
+          Compare-at (cents)
+          <input type="number" name="compareAt" min="0" [(ngModel)]="form.compareAtPriceCents" />
+        </label>
+        <label>
+          Stock
+          <input type="number" name="stock" min="0" [(ngModel)]="form.stock" />
+        </label>
+        <label>
+          Image URL
+          <input name="imageUrl" [(ngModel)]="form.imageUrl" />
+        </label>
+        <label style="flex-direction: row; align-items: center; gap: 0.5rem">
+          <input type="checkbox" [(ngModel)]="form.isActive" name="isActive" />
+          Active
+        </label>
+      </div>
+      <div class="row">
+        <button type="submit">{{ editingId() ? "Save" : "Create" }}</button>
+        @if (editingId()) {
+          <button type="button" class="secondary" (click)="resetForm()">Cancel edit</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else {
+    <div class="panel" style="overflow-x: auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Active</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of items(); track p.id) {
+            <tr>
+              <td>{{ p.name }}</td>
+              <td><code>{{ p.slug }}</code></td>
+              <td>{{ formatMoney(p.priceCents) }}</td>
+              <td>{{ p.stock }}</td>
+              <td>{{ p.isActive ? "yes" : "no" }}</td>
+              <td style="white-space: nowrap">
+                <button type="button" class="secondary" (click)="startEdit(p)">Edit</button>
+                <button type="button" class="secondary" (click)="toggleActive(p)">Toggle</button>
+                <button type="button" class="danger" (click)="delete(p)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
