@@ -1,0 +1,48 @@
+@if (loading()) {
+  <p class="loading">Loading…</p>
+} @else if (error()) {
+  <div>
+    <p class="muted">{{ error() }}</p>
+    <a routerLink="/">← Back to catalog</a>
+  </div>
+} @else {
+  @if (product(); as p) {
+    <div class="detail">
+      <img
+        class="detail-img"
+        [src]="p.imageUrl || 'https://placehold.co/800x600/eaeaea/999?text=Product'"
+        alt=""
+      />
+      <div>
+        <div class="card-meta">{{ p.category }}</div>
+        <h1>{{ p.name }}</h1>
+        <div class="price-row">
+          <span class="price">{{ formatMoney(p.priceCents) }}</span>
+          @if (p.compareAtPriceCents != null && p.compareAtPriceCents > p.priceCents) {
+            <span class="was">{{ formatMoney(p.compareAtPriceCents) }}</span>
+          }
+        </div>
+        <p class="detail-desc">{{ p.description }}</p>
+        @if ((p.promotions?.length ?? 0) > 0) {
+          <div>
+            <strong>Active offers</strong>
+            <ul>
+              @for (pr of p.promotions!; track pr.id) {
+                <li>
+                  {{ pr.title }}
+                  @if (pr.description) {
+                    — {{ pr.description }}
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        <p class="muted">
+          {{ p.stock > 0 ? p.stock + " in stock" : "Out of stock (demo)" }}
+        </p>
+        <p><a routerLink="/">← Back to catalog</a></p>
+      </div>
+    </div>
+  }
+}
